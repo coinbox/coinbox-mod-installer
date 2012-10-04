@@ -2,12 +2,13 @@ from PySide import QtGui
 
 import cbpos
 
-from cbpos.mod.installer import utils
+from cbpos.mod.installer.controllers import ModuleManager
 
 class ModulesPage(QtGui.QWidget):
     def __init__(self):
         super(ModulesPage, self).__init__()
         
+        self.manager = ModuleManager()
         self.headers = ['Module', 'Name', 'Dependencies', 'Enabled']
         
         self.modules = QtGui.QTreeWidget()
@@ -87,7 +88,7 @@ class ModulesPage(QtGui.QWidget):
     def _enableModules(self, enable=None):
         selected_items = self.modules.selectedItems()
         mod_names = [item.text(0) for item in selected_items]
-        utils.enableModule(mod_names, enable)
+        self.manager.enable(mod_names, enable)
         self.populate(update=True)
     
     def onModuleItemSelected(self):
@@ -114,13 +115,13 @@ class ModulesPage(QtGui.QWidget):
             export_source = (reply == QtGui.QMessageBox.Yes)
 
         mod = self.modules_dict[name]
-        utils.exportModule(mod, target, export_source=export_source)
+        self.manager.export(mod, target, export_source=export_source)
     
     def onInstallButton(self):
         wildcard = "Zip file (*.zip);;All files (*.*)"
         target, _ = QtGui.QFileDialog.getOpenFileName(self, "Select the installer", "", wildcard)
         
-        info = utils.getInstallerInfo(target)
+        info = self.manager.installer_info(target)
         if not info:
             QtGui.QMessageBox.information(self, 'Install Module', 'Invalid module installer.', QtGui.QMessageBox.Ok)
             return
@@ -133,7 +134,7 @@ class ModulesPage(QtGui.QWidget):
         if reply != QtGui.QMessageBox.Yes:
             return
         
-        if cbpos.mod.isInstalled(base_name):
+        if cbpos.modules.is_installed(base_name):
             reply = QtGui.QMessageBox.question(self, 'Install Module',
                             '%s is already installed. Do you want to replace it?' % (base_name,),
                             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel)
@@ -141,9 +142,9 @@ class ModulesPage(QtGui.QWidget):
                 return
             else:
                 replace = (reply == QtGui.QMessageBox.Yes)
-            utils.installModule(target, info=info, replace=replace)
+            self.manager.install(target, info=info, replace=replace)
         else:
-            utils.installModule(target, info=info, replace=False)
+            self.manager.install(target, info=info, replace=False)
         self.populate()
     
     def onUninstallButton(self):
@@ -164,5 +165,5 @@ class ModulesPage(QtGui.QWidget):
         
         for item in selected_items:
             name = item.text(0)
-            utils.uninstallModule(name, remove_res)
+            self.manager.uninstall(name, remove_res)
         self.populate()
