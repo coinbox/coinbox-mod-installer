@@ -9,7 +9,7 @@ class ModuleLoader(BaseModuleLoader):
         from cbpos.mod.installer.views import ModulesPage
             
         return [[],
-                [{'parent': 'System', 'label': 'Modules', 'page': ModulesPage, 'image': self.res('images/menu-modules.png')}]]
+                [{'parent': 'System', 'label': 'Modules', 'page': ModulesPage, 'image': cbpos.res.installer('images/menu-modules.png')}]]
 
     def argparser(self):
         parser1 = cbpos.subparsers.add_parser('modules', description="Modules operations")
