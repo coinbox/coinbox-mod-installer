@@ -73,16 +73,17 @@ class ModuleManager(object):
     def uninstall(self, mod_name, remove_resources=True):
         raise NotImplemetedError, 'This feature does not work yet'
         self.enable(mod_name)
-        shutil.rmtree('./cbpos/mod/'+mod_name)
+        mod = cbpos.modules.by_name(mod_name)
+        shutil.rmtree(mod.path)
         if remove_resources:
-            shutil.rmtree('./res/'+mod_name)
+            shutil.rmtree(mod.res_path())
         # TODO: remove the module from the module list in cbpos.mod
         return True
 
     def export(self, mod, target, export_source=False):
         z = zipfile.PyZipFile(target, 'w')
     
-        config_filename = 'res/installer/modconfig/%s.cfg' % (mod.name,)
+        config_filename = cbpos.res.installer('modconfig/%s.cfg' % (mod.name,))
         config_file = open(config_filename, 'w')
         
         config = ConfigParser.SafeConfigParser()
@@ -97,10 +98,10 @@ class ModuleManager(object):
         z.write(config_filename, 'install.cfg')
         
         if export_source:
-            os.path.walk('./cbpos/mod/'+mod.name, lambda *args: self.__zipdirectory(*args, ignore_hidden=True), z)
+            os.path.walk(mod.path, lambda *args: self.__zipdirectory(*args, ignore_hidden=True), z)
         else:
-            z.writepy('./cbpos/mod/'+mod.name, 'mod')
-        os.path.walk('./res/'+mod.name, self.__zipdirectory, z)
+            z.writepy(mod.path, 'mod')
+        os.path.walk(mod.res_path(), self.__zipdirectory, z)
         z.close()
 
     def __zipdirectory(self, z, dirname, filenames, ignore_hidden=True):

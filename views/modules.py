@@ -9,7 +9,7 @@ class ModulesPage(QtGui.QWidget):
         super(ModulesPage, self).__init__()
         
         self.manager = ModuleManager()
-        self.headers = ['Module', 'Name', 'Dependencies', 'Enabled']
+        self.headers = ['Module', 'Name', 'Dependencies', 'State']
         
         self.modules = QtGui.QTreeWidget()
         self.modules.setColumnCount(len(self.headers))
@@ -53,34 +53,35 @@ class ModulesPage(QtGui.QWidget):
         self.setLayout(layout)
         
         self.populate(update=False)
+        self.onModuleItemSelected()
     
     def populate(self, update=False):
         disabled_str = cbpos.config['mod', 'disabled_modules']
         disabled = disabled_str.split(',') if disabled_str != '' else []
         
+        modules = sorted(cbpos.modules.all_modules())
+        
+        def fillitem(mod, item):
+            item.setText(0, mod.name)
+            item.setText(1, mod.loader.name if mod.loader else 'N/A')
+            item.setText(2, ', '.join(mod.loader.dependencies) if mod.loader else 'N/A')
+            if mod.disabled:
+                [item.setBackground(c, QtGui.QColor(255, 0, 0)) for c in range(4)]
+                item.setText(3, 'Disabled' if mod.name in disabled else 'Conflict')
+            else:
+                item.setText(3, 'Enabled')
+            return item
+        
         if not update:
-            self._modules = cbpos.modules.all_wrappers()
-            self.modules_dict = dict([(mod.name, mod) for mod in self._modules])
             self.modules.clear()
             self._items = []
-            for i, mod in enumerate(self._modules):
+            for i, mod in enumerate(modules):
                 item = QtGui.QTreeWidgetItem(self.modules)
-                if mod.disabled:
-                    [item.setBackground(c, QtGui.QColor(255, 0, 0)) for c in range(4)]
-                item.setText(0, mod.name)
-                item.setText(1, mod.loader.name if mod.loader else 'None')
-                item.setText(2, ', '.join(mod.loader.dependencies) if mod.loader else 'None')
-                item.setText(3, 'Disabled' if mod.name in disabled else 'Enabled')
+                fillitem(mod, item)
                 self._items.append(item)
         else:
-            for i, mod in enumerate(self._modules):
-                item = self._items[i]
-                if mod.disabled:
-                    [item.setBackground(c, QtGui.QColor(255, 0, 0)) for c in range(4)]
-                item.setText(0, mod.name)
-                item.setText(1, mod.loader.name if mod.loader else 'None')
-                item.setText(2, ', '.join(mod.loader.dependencies) if mod.loader else 'None')
-                item.setText(3, 'Disabled' if mod.name in disabled else 'Enabled')
+            for i, mod in enumerate(modules):
+                fillitem(mod, self._items[i])
         
         for c in xrange(self.modules.columnCount()):
             self.modules.resizeColumnToContents(c)
