@@ -81,6 +81,7 @@ class ModuleManager(object):
         return True
 
     def export(self, mod, target, export_source=False):
+        raise NotImplemetedError, 'This feature does not work yet'
         z = zipfile.PyZipFile(target, 'w')
     
         config_filename = cbpos.res.installer('modconfig/%s.cfg' % (mod.name,))

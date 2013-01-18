@@ -20,7 +20,7 @@ class ModuleLoader(BaseModuleLoader):
         return True
 
     def arg_handler(self, args):
-        for mod in cbpos.modules.all():
+        for mod in cbpos.modules.all_loaders():
             print '>>', mod, mod.name
             print '\t', ', '.join(mod.dependencies)
         return False
