@@ -48,6 +48,7 @@ class ModuleManager(object):
         return (base_name, name, version)
 
     def install(self, target, info=None, replace=False):
+        raise NotImplemetedError, 'This feature does not work yet'
         if info is None:
             info = self.installer_info(target)
             if not info:
