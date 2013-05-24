@@ -90,9 +90,9 @@ class ModuleManager(object):
         
         config = ConfigParser.SafeConfigParser()
         config.add_section('info')
-        config.set('info', 'base_name', str(mod.name))
-        config.set('info', 'name', str(mod.loader.name))
-        config.set('info', 'version', str(mod.loader.version))
+        config.set('info', 'base_name', unicode(mod.name))
+        config.set('info', 'name', unicode(mod.loader.name))
+        config.set('info', 'version', unicode(mod.loader.version))
         
         config.write(config_file)
         config_file.close()
