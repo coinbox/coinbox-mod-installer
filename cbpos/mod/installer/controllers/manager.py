@@ -7,9 +7,9 @@ import cbpos
 class ModuleManager(object):
     
     def enable(self, mod_names, enable=True):
-        disabled_str = cbpos.config['mod', 'disabled_modules']
-        disabled_set = set(disabled_str.split(',')) if disabled_str != '' else set()
-        if type(mod_names) == str:
+        disabled = cbpos.config['mod', 'disabled_modules']
+        disabled_set = set(disabled) if disabled is not None else set()
+        if isinstance(mod_names, (str, unicode)):
             mod_names = [mod_names]
         
         if enable:
@@ -25,7 +25,7 @@ class ModuleManager(object):
             for mod_name in mod_names:
                 disabled_set.add(mod_name)
         
-        cbpos.config['mod', 'disabled_modules'] = ','.join(disabled_set)
+        cbpos.config['mod', 'disabled_modules'] = disabled_set
         cbpos.config.save()
     
     disable = lambda self, mod_names: self.enable(mod_names, enable=False)

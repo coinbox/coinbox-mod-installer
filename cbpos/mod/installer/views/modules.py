@@ -56,8 +56,8 @@ class ModulesPage(QtGui.QWidget):
         self.onModuleItemSelected()
     
     def populate(self, update=False):
-        disabled_str = cbpos.config['mod', 'disabled_modules']
-        disabled = disabled_str.split(',') if disabled_str != '' else []
+        disabled = cbpos.config['mod', 'disabled_modules']
+        disabled = disabled if disabled is not None else []
         
         modules = sorted(cbpos.modules.all_modules())
         
