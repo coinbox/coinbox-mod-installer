@@ -6,6 +6,16 @@ import cbpos
 
 class ModuleManager(object):
     
+    def get_wrappers(self):
+        return cbpos.modules.all_wrappers()
+
+    def get_disabled_names(self):
+        disabled = cbpos.config['mod', 'disabled_modules']
+        if disabled is None:
+            return []
+        else:
+            return disabled
+    
     def enable(self, mod_names, enable=True):
         disabled = cbpos.config['mod', 'disabled_modules']
         disabled_set = set(disabled) if disabled is not None else set()
@@ -25,7 +35,7 @@ class ModuleManager(object):
             for mod_name in mod_names:
                 disabled_set.add(mod_name)
         
-        cbpos.config['mod', 'disabled_modules'] = disabled_set
+        cbpos.config['mod', 'disabled_modules'] = tuple(disabled_set)
         cbpos.config.save()
     
     disable = lambda self, mod_names: self.enable(mod_names, enable=False)

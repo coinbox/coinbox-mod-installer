@@ -56,18 +56,18 @@ class ModulesPage(QtGui.QWidget):
         self.onModuleItemSelected()
     
     def populate(self, update=False):
-        disabled = cbpos.config['mod', 'disabled_modules']
-        disabled = disabled if disabled is not None else []
+        disabled = self.manager.get_disabled_names()
         
-        modules = sorted(cbpos.modules.all_modules())
+        modules = self.manager.get_wrappers()
         
         def fillitem(mod, item):
-            item.setText(0, mod.name)
-            item.setText(1, mod.loader.name if mod.loader else 'N/A')
-            item.setText(2, ', '.join(mod.loader.dependencies) if mod.loader else 'N/A')
+            item.setText(0, mod.base_name)
+            item.setText(1, mod.metadata.display_name if mod.metadata else 'N/A')
+            item.setText(2, ', '.join(a+'-'+b for (a,b) in mod.metadata.dependencies) \
+                         if mod.metadata else 'N/A')
             if mod.disabled:
                 [item.setBackground(c, QtGui.QColor(255, 0, 0)) for c in range(4)]
-                item.setText(3, 'Disabled' if mod.name in disabled else 'Conflict')
+                item.setText(3, 'Disabled' if mod.base_name in disabled else 'Conflict')
             else:
                 item.setText(3, 'Enabled')
             return item
