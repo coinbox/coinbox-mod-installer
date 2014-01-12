@@ -2,7 +2,7 @@ from PySide import QtGui
 
 import cbpos
 
-from cbpos.mod.installer.controllers import ModuleManager
+from cbmod.installer.controllers import ModuleManager
 
 class ModulesPage(QtGui.QWidget):
     def __init__(self):

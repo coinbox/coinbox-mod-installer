@@ -4,7 +4,7 @@ from cbpos.modules import BaseModuleLoader
 class ModuleLoader(BaseModuleLoader):
     def menu(self):
         from cbpos.interface import MenuItem
-        from cbpos.mod.installer.views import ModulesPage
+        from cbmod.installer.views import ModulesPage
             
         return [[],
                 [MenuItem('modules', parent='system',
