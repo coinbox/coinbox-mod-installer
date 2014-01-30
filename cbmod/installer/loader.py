@@ -8,7 +8,7 @@ class ModuleLoader(BaseModuleLoader):
             
         return [[],
                 [MenuItem('modules', parent='system',
-                          label=cbpos.tr.installer._('Modules'),
+                          label=cbpos.tr.installer_('Modules'),
                           icon=cbpos.res.installer('images/menu-modules.png'),
                           page=ModulesPage
                           )
