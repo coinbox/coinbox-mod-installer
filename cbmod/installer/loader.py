@@ -19,10 +19,6 @@ class ModuleLoader(BaseModuleLoader):
         parser1 = cbpos.subparsers.add_parser('modules', description="Modules operations")
         parser1.set_defaults(handle=self.arg_handler)
 
-    def init(self):
-        # TODO: Check for updates
-        return True
-
     def arg_handler(self, args):
         for wrap in cbpos.modules.all_wrappers():
             if wrap.disabled:
