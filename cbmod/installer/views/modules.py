@@ -2,9 +2,11 @@ from PySide import QtGui
 
 import cbpos
 
+from cbmod.base.views import BasePage
+
 from cbmod.installer.controllers import ModuleManager
 
-class ModulesPage(QtGui.QWidget):
+class ModulesPage(BasePage):
     def __init__(self):
         super(ModulesPage, self).__init__()
         
